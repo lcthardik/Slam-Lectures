@@ -26,6 +26,21 @@ def find_cylinders(scan, scan_derivative, jump, min_dist):
     cylinder_list = []
     on_cylinder = False
     sum_ray, sum_depth, rays = 0.0, 0.0, 0
+    for i in range(len(scan_derivative)):
+        if ((scan_derivative[i])<-jump) : 
+            on_cylinder=True
+            
+        if scan_derivative[i]<-jump and on_cylinder:
+            sum_ray, sum_depth, rays = 0.0, 0.0, 0
+
+        if (on_cylinder) and scan[i] > min_dist:            
+            if scan_derivative[i]>jump :
+                on_cylinder=False
+                cylinder_list.append((sum_ray/rays,sum_depth/rays))
+                continue
+            rays+=1
+            sum_ray+=i
+            sum_depth+=scan[i]
 
     # --->>> Insert here your previous solution from find_cylinders_question.py.
 
@@ -38,7 +53,10 @@ def compute_cartesian_coordinates(cylinders, cylinder_offset):
         # c is a tuple (beam_index, range).
         # For converting the beam index to an angle, use
         # LegoLogfile.beam_index_to_angle(beam_index)
-        result.append( (0,0) ) # Replace this by your (x,y)
+        beam_angle=LegoLogfile.beam_index_to_angle(c[0])
+        x=(c[1]+cylinder_offset)*cos(beam_angle)
+        y=(c[1]+cylinder_offset)*sin(beam_angle)
+        result.append( (x,y) ) # Replace this by your (x,y)
     return result
         
 
@@ -57,7 +75,7 @@ if __name__ == '__main__':
     # With zero or more points.
     # Note "D C" is also written for otherwise empty lines (no
     # cylinders in scan)
-    out_file = file("cylinders.txt", "w")
+    out_file = open("cylinders.txt", "w")
     for scan in logfile.scan_data:
         # Find cylinders.
         der = compute_derivative(scan, minimum_valid_distance)

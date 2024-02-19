@@ -130,7 +130,8 @@ class LegoLogfile(object):
                         self.detected_cylinders = []
                         first_detected_cylinders = False
                     cyl = list(map(float, sp[2:]))
-                    self.detected_cylinders.append([(cyl[2*i], cyl[2*i+1]) for i in range(len(cyl)/2)])
+                    self.detected_cylinders.append([(cyl[2*i], cyl[2*i+1]) for i in range(len(cyl)//2)])
+
 
         f.close()
 
@@ -173,4 +174,3 @@ class LegoLogfile(object):
                 s += " %.1f" % f[j]
 
         return s
-
