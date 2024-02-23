@@ -14,6 +14,13 @@ from slam_04_a_project_landmarks import\
 # j is the index of the reference_cylinder, to the result list.
 def find_cylinder_pairs(cylinders, reference_cylinders, max_radius):
     cylinder_pairs = []
+    for i in range(len(cylinders)):
+        for j in range(len(reference_cylinders)):
+            x,y=cylinders[i]
+            ox,oy=reference_cylinders[j]
+            d=((x-ox)**2 + (y-oy)**2)**0.5
+            if d<max_radius:
+                cylinder_pairs.append((i,j))
 
     # --->>> Enter your code here.
     # Make a loop over all cylinders and reference_cylinders.
@@ -51,7 +58,7 @@ if __name__ == '__main__':
     reference_cylinders = [l[1:3] for l in logfile.landmarks]
 
     # Iterate over all positions.
-    out_file = file("find_cylinder_pairs.txt", "w")
+    out_file = open("find_cylinder_pairs.txt", "w")
     for i in range(len(logfile.scan_data)):
         # Compute the new pose.
         pose = filter_step(pose, logfile.motor_ticks[i],

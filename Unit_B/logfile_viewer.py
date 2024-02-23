@@ -1,5 +1,5 @@
 # Python routines to inspect a ikg LEGO robot logfile.
-# Author: Claus Brenner, 28.10.2012
+# Author: Claus Brenner, 28 OCT 2012
 from tkinter import *
 import tkinter.filedialog
 from lego_robot import *
@@ -185,7 +185,11 @@ def slider_moved(index):
 
 def add_file():
     filename = tkinter.filedialog.askopenfilename(filetypes = [("all files", ".*"), ("txt files", ".txt")])
-    if filename and filename not in all_file_names:
+    if filename:
+        # If the file is in the list already, remove it (so it will be appended
+        # at the end).
+        if filename in all_file_names:
+            all_file_names.remove(filename)
         all_file_names.append(filename)
         load_data()
 
@@ -226,7 +230,7 @@ def load_data():
                      for cylinders_one_scan in logfile.detected_cylinders ]
         draw_objects.append(Points(positions, sensor_canvas, "#88FF88"))
 
-    # Insert: detected cylinders, in world coord system.
+    # Insert: detected cylinders, transformed into world coord system.
     if logfile.detected_cylinders and logfile.filtered_positions and \
         len(logfile.filtered_positions[0]) > 2:
         positions = []
@@ -242,6 +246,13 @@ def load_data():
                 this_pose_positions.append(p)
             positions.append(this_pose_positions)
         draw_objects.append(Points(positions, world_canvas, "#88FF88"))
+
+    # Insert: world objects, cylinders.
+    if logfile.world_cylinders:
+        positions = [[to_world_canvas(pos, canvas_extents, world_extents)
+                      for pos in cylinders_one_scan]
+                      for cylinders_one_scan in logfile.world_cylinders]
+        draw_objects.append(Points(positions, world_canvas, "#DC23C5"))
 
     # Start new canvas and do all background drawing.
     world_canvas.delete(ALL)
@@ -284,3 +295,4 @@ if __name__ == '__main__':
 
     root.mainloop()
     root.destroy()
+
