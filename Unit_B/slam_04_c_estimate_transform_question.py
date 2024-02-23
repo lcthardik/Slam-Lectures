@@ -18,6 +18,13 @@ from math import sqrt
 # This is the function developed in slam_04_b_find_cylinder_pairs.
 def find_cylinder_pairs(cylinders, reference_cylinders, max_radius):
     cylinder_pairs = []
+    for i in range(len(cylinders)):
+        for j in range(len(reference_cylinders)):
+            x,y=cylinders[i]
+            ox,oy=reference_cylinders[j]
+            d=((x-ox)**2 + (y-oy)**2)**0.5
+            if d<max_radius:
+                cylinder_pairs.append((i,j))
 
     # --->>> Insert here your code from the last question,
     # slam_04_b_find_cylinder_pairs.
@@ -42,12 +49,44 @@ def compute_center(point_list):
 # i.e., the rotation angle is not given in radians, but rather in terms
 # of the cosine and sine.
 def estimate_transform(left_list, right_list, fix_scale = False):
+    print("bc function shuru")
     # Compute left and right center.
     lc = compute_center(left_list)
     rc = compute_center(right_list)
+    leftprime=[]
+    rightprime=[]
+    for i in range(len(left_list)):
+        lx=left_list[i][0]-lc[0]
+        ly=left_list[i][1]-lc[1]
+        rx=right_list[i][0]-rc[0]
+        ry=right_list[i][1]-rc[1]
+        leftprime.append((lx,ly))
+        rightprime.append((rx,ry))
+
+    cs=0
+    ss=0
+    rr=0
+    ll=0
+    for i in range(len(left_list)):
+        cs += rightprime[i][0]*leftprime[i][0]+rightprime[i][1]*leftprime[i][1]
+        ss += -1*rightprime[i][0]*leftprime[i][1]+rightprime[i][1]*leftprime[i][0]
+        rr += rightprime[i][0]*rightprime[i][0]+rightprime[i][1]*rightprime[i][1]
+        ll += leftprime[i][0]*leftprime[i][0]+leftprime[i][1]*leftprime[i][1]
+    print(cs," ",ss)
+    
+    if fix_scale:
+        la=1
+    else:
+        la=(rr/ll)**0.5
+    if ll==0 or rr==0:
+        return None
+    c=cs/((cs**2+ss**2)**0.5)
+    s=ss/((cs**2+ss**2)**0.5)
+    tx=rc[0]-la*(c*lc[0]-s*lc[1])
+    ty=rc[1]-la*(s*lc[0]+c*lc[1])
 
     # --->>> Insert here your code to compute lambda, c, s and tx, ty.
-
+    
     return la, c, s, tx, ty
 
 # Given a similarity transformation:
@@ -88,7 +127,7 @@ if __name__ == '__main__':
     logfile.read("robot_arena_landmarks.txt")
     reference_cylinders = [l[1:3] for l in logfile.landmarks]
 
-    out_file = file("estimate_transform.txt", "w")
+    out_file = open("estimate_transform.txt", "w")
     for i in range(len(logfile.scan_data)):
         # Compute the new pose.
         pose = filter_step(pose, logfile.motor_ticks[i],
