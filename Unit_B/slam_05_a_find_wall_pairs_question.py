@@ -26,6 +26,22 @@ def get_corresponding_points_on_wall(points,
                                      eps = 150.0):
     left_list = []
     right_list = []
+    for i in range(len(points)):
+        x,y=points[i]
+        if (-eps<x<arena_left+eps and -eps<y<arena_top+eps):
+            left_list.append(points[i])
+            right_list.append((0,y))
+        elif (-eps<x<arena_right+eps and -eps<y<eps):
+            left_list.append(points[i])
+            right_list.append((x,0))
+        elif (arena_right-eps<x<arena_right+eps and 0<y<arena_top+eps):
+            left_list.append(points[i])
+            right_list.append((arena_right,y))
+        elif (-eps<x<arena_right+eps and arena_top-eps<y<arena_top+eps):
+            left_list.append(points[i])
+            right_list.append((x,arena_top))
+
+            #or (0<x<arena_right and 0<y<eps) or (arena_right-eps<x<arena_right and 0<y<arena_top) or (0<x<arena_right and arena_top-eps<y<arena_top)
 
     # ---> Implement your code here.
 
@@ -47,7 +63,7 @@ if __name__ == '__main__':
     logfile.read("robot4_scan.txt")
 
     # Iterate over all positions.
-    out_file = file("find_wall_pairs.txt", "w")
+    out_file = open("find_wall_pairs.txt", "w")
     for i in range(len(logfile.scan_data)):
         # Compute the new pose.
         pose = filter_step(pose, logfile.motor_ticks[i],

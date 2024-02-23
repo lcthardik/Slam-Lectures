@@ -6,9 +6,9 @@
 from lego_robot import *
 from slam_b_library import filter_step
 from slam_04_a_project_landmarks import write_cylinders
-from slam_04_d_apply_transform_solution import\
+from slam_04_d_apply_transform_question import\
      estimate_transform, apply_transform, correct_pose
-from slam_05_a_find_wall_pairs_solution import\
+from slam_05_a_find_wall_pairs_question import\
      get_subsampled_points, get_corresponding_points_on_wall
 
 
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     logfile.read("robot4_scan.txt")
 
     # Iterate over all positions.
-    out_file = file("estimate_wall_transform.txt", "w")
+    out_file = open("estimate_wall_transform.txt", "w")
     for i in range(len(logfile.scan_data)):
         # Compute the new pose.
         pose = filter_step(pose, logfile.motor_ticks[i],
