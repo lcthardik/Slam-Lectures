@@ -7,9 +7,8 @@ from distribution import *
 def move(distribution, delta):
     """Returns a Distribution that has been moved (x-axis) by the amount of
        delta."""
-
-    # --->>> Insert your code here.
-    
+    #print(distribution)
+    distribution.offset=distribution.offset+delta
     return distribution  # Replace this by your own result.
 
 if __name__ == '__main__':
@@ -19,13 +18,13 @@ if __name__ == '__main__':
     # Start with a known position: probability 1.0 at position 10.
     position = Distribution.triangle(10,2)
     plot(position.plotlists(0,100)[0], position.plotlists(0,100)[1],
-         linestyle='steps')
+          drawstyle='steps')
 
     # Now move and plot.
     for m in moves:
         position = move(position, m)
         plot(position.plotlists(0,100)[0], position.plotlists(0,100)[1],
-             linestyle='steps')
+              drawstyle='steps')
     ylim(0.0, 1.1)
     show()
 
