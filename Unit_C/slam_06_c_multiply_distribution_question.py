@@ -4,12 +4,19 @@
 from pylab import plot, show
 from distribution import *
 
-def multiply(a, b):
+def multiply(a, b):    
     """Multiply two distributions and return the resulting distribution."""
-
     # --->>> Put your code here.
+    s=min(a.start(),b.start())
+    e=max(a.stop(),b.stop())
+    val=[]
+    for i in range(s,e):
+       val.append(a.value(i)*b.value(i))
+    nw=Distribution(s,val)
+    Distribution.normalize(nw)
+
     
-    return a  # Modify this to return your result.
+    return nw  # Modify this to return your result.
 
 
 if __name__ == '__main__':
@@ -20,7 +27,7 @@ if __name__ == '__main__':
     position_error = 100
     position = Distribution.triangle(position_value, position_error)
     plot(position.plotlists(*arena)[0], position.plotlists(*arena)[1],
-         color='b', linestyle='steps')
+         color='b', drawstyle='steps')
 
     # Here is our measurement. Plotted in green.
     # That is what we read from the instrument.
@@ -28,13 +35,13 @@ if __name__ == '__main__':
     measurement_error = 200
     measurement = Distribution.triangle(measured_value, measurement_error)
     plot(measurement.plotlists(*arena)[0], measurement.plotlists(*arena)[1],
-         color='g', linestyle='steps')
+         color='g', drawstyle='steps')
 
     # Now, we integrate our sensor measurement. Result is plotted in red.
     position_after_measurement = multiply(position, measurement)
     plot(position_after_measurement.plotlists(*arena)[0],
          position_after_measurement.plotlists(*arena)[1],
-         color='r', linestyle='steps')
+         color='r', drawstyle='steps')
 
     show()
 
